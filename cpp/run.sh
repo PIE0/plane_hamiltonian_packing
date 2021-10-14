@@ -1,0 +1,1 @@
+g++ --std=c++17 main.cpp graph_utils.cpp && ./a.out input.txt - sum rnd_rot four_per
