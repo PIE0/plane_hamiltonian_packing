@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    {% load static %}
+    <link rel="icon" type="image/ico" href="{% static 'img/favicon.ico' %}"/>
+    <link rel="stylesheet" href="{% static 'css/plane.css' %}">
+    <script type="text/javascript" src="{% static 'js/paper-full.min.js' %}"></script> 
+  </head>
+  <body>
+  
+    {% comment %} Buttons {% endcomment %}
+    <div>
+    </div>
+
+    {% comment %} Grid {% endcomment %}
+    <div>
+      <canvas id="plane"></canvas>
+    </div>
+
+  </body>
+
+  <script type="text/x-paperscript" canvas="plane" src="{% static 'js/plane.js' %}"></script> 
+</html>
