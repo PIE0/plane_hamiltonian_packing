@@ -1,5 +1,5 @@
 
-var POINT_DIAM = 5;
+var POINT_DIAM = 20;
 var PLANE_HEIGHT = $(plane).height();
 var PLANE_WIDTH = $(plane).width();
 var CANVAS_HEIGHT = Math.ceil(PLANE_HEIGHT/POINT_DIAM)+1;
@@ -18,8 +18,8 @@ function to_ar(loc) {
 function wtoc(loc) { // canvas window coordinate to canvas array coordinate
 	loc = makePoint(loc);
 	return {
-		x: Math.round(loc.x / POINT_DIAM),
-		y: Math.round(loc.y / POINT_DIAM),
+		x: Math.floor((loc.x+POINT_DIAM/2) / POINT_DIAM),
+		y: Math.floor((loc.y+POINT_DIAM/2) / POINT_DIAM),
 	}
 }
 function ctow(loc) { // canvas array coordinate to canvas window coordinate
@@ -59,6 +59,7 @@ function onMouseDown(event) {
 	canvas_loc = wtoc(loc);
 	if(mark[canvas_loc.y][canvas_loc.x])
 		return;
+	console.log(event.point, loc, canvas_loc)
 	mark[canvas_loc.y][canvas_loc.x] = true;
 	circles.push(canvas_loc);
 	var circle = new Path.Circle(loc, POINT_DIAM/2-2);
@@ -67,15 +68,14 @@ function onMouseDown(event) {
 }
 
 // Draw 2D Cartesian grid
-for(var i = 0; i < CANVAS_HEIGHT; i++) {
-	var color = 'gray';
-	new Path({
-		segments: [ctow([0, i]), ctow([CANVAS_WIDTH, i])],
-		strokeColor: color,
-		dashArray: [1, POINT_DIAM-1],
-	});
-}
+for(var i = 0; i < CANVAS_HEIGHT; i++)
+	for(var j = 0; j < CANVAS_WIDTH; j++) {
+		var c = new Path.Circle(ctow([j, i]), 1);
+		c.fillColor = 'gray';
+	}
 
+
+// Draw X Axis
 new Path({
 	segments: [[0, X_AXIS_HEIGHT], [PLANE_WIDTH, X_AXIS_HEIGHT]],
 	strokeColor: 'black',
@@ -83,17 +83,18 @@ new Path({
 });
 for(var i = 0; i < CANVAS_WIDTH; i++) {
 	new Path({
-		segments: [[ctow([i, 0]).x, X_AXIS_HEIGHT+3], [ctow([i, 0]).x, X_AXIS_HEIGHT-3]],
+		segments: [[ctow([i, 0]).x, X_AXIS_HEIGHT+2], [ctow([i, 0]).x, X_AXIS_HEIGHT-2]],
 		strokeColor: 'black',
 	});
 	if(i % 5 == ORIGIN_CANVAS_WIDTH % 5)
 		new PointText({
-			point: [ctow([i, 0]).x-4, X_AXIS_HEIGHT+15],
+			point: [ctow([i, 0]).x-POINT_DIAM/4, X_AXIS_HEIGHT+POINT_DIAM*0.8],
 			content: ctoca([i, 0]).x,
-			fontSize: 12,
+			fontSize: POINT_DIAM/2,
 		});
 }
 
+// Draw Y Axis
 new Path({
 	segments: [[Y_AXIS_WIDTH, 0], [Y_AXIS_WIDTH, PLANE_HEIGHT]],
 	strokeColor: 'black',
@@ -101,14 +102,14 @@ new Path({
 });
 for(var i = 0; i < CANVAS_HEIGHT; i++) {
 	new Path({
-		segments: [[Y_AXIS_WIDTH-3, ctow([0, i]).y], [Y_AXIS_WIDTH+3, ctow([0, i]).y]],
+		segments: [[Y_AXIS_WIDTH-2, ctow([0, i]).y], [Y_AXIS_WIDTH+2, ctow([0, i]).y]],
 		strokeColor: 'black',
 	});
 	if(i % 5 == ORIGIN_CANVAS_HEIGHT % 5 && i != ORIGIN_CANVAS_HEIGHT)
 		new PointText({
-			point: [Y_AXIS_WIDTH-20, ctow([0, i]).y+5],
+			point: [Y_AXIS_WIDTH-POINT_DIAM*1.1, ctow([0, i]).y+POINT_DIAM/4],
 			content: ctoca([0, i]).y,
-			fontSize: 12,
+			fontSize: POINT_DIAM/3*2,
 		});
 }
 
