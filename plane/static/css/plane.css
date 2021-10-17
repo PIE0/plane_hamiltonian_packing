@@ -1,5 +1,6 @@
 #plane {
-    height: 100%;
-    width: 85%;
-    border: 1px solid black;
+    resize: both;
+    width: 70%;    
+    height: 70%;
+    border: 4px solid black;
 }
