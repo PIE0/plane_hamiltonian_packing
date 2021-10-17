@@ -59,12 +59,26 @@ function onMouseDown(event) {
 	canvas_loc = wtoc(loc);
 	if(mark[canvas_loc.y][canvas_loc.x])
 		return;
-	console.log(event.point, loc, canvas_loc)
 	mark[canvas_loc.y][canvas_loc.x] = true;
-	circles.push(canvas_loc);
+	var coords = ctoca(canvas_loc);
+	circles.push([coords.x, coords.y]);
 	var circle = new Path.Circle(loc, POINT_DIAM/2-2);
 	circle.strokeColor = 'red';
 	circle.strokeWidth = 3;
+}
+
+document.getElementById("run").onclick = function() {run_algorithms()};
+
+function run_algorithms() {
+    $.ajax({
+		url : 'http://127.0.0.1:8000/run/',
+		headers: { 'X-CSRFToken': Cookies.get('csrftoken')},
+		type : 'POST',
+		data : JSON.stringify({
+			points: circles,
+		}),
+		dataType: 'application/json; charset=utf-8',
+	});
 }
 
 // Draw 2D Cartesian grid
@@ -73,8 +87,6 @@ for(var i = 0; i < CANVAS_HEIGHT; i++)
 		var c = new Path.Circle(ctow([j, i]), 1);
 		c.fillColor = 'gray';
 	}
-
-
 // Draw X Axis
 new Path({
 	segments: [[0, X_AXIS_HEIGHT], [PLANE_WIDTH, X_AXIS_HEIGHT]],
@@ -93,7 +105,6 @@ for(var i = 0; i < CANVAS_WIDTH; i++) {
 			fontSize: POINT_DIAM/2,
 		});
 }
-
 // Draw Y Axis
 new Path({
 	segments: [[Y_AXIS_WIDTH, 0], [Y_AXIS_WIDTH, PLANE_HEIGHT]],

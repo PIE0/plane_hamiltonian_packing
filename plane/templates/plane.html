@@ -6,19 +6,18 @@
     <link rel="stylesheet" href="{% static 'css/plane.css' %}">
     <script type="text/javascript" src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
     <script type="text/javascript" src="{% static 'js/paper-full.min.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/js.cookie.min.js' %}"></script>
     <script type="text/x-paperscript" canvas="plane" src="{% static 'js/plane.js' %}"></script> 
   </head>
   <body>
-  
-    {% comment %} Buttons {% endcomment %}
-    <div>
-    </div>
-
     {% comment %} Grid {% endcomment %}
     <div>
       <canvas id="plane"></canvas>
     </div>
+    {% comment %} Buttons {% endcomment %}
+    <div id="config">
+       <button id="run" type="button">اجرا کن</button> 
+    </div>
 
   </body>
-
 </html>
