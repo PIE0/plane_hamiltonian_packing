@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.http import JsonResponse
 from plane.cpp_runner import run_cpp
 import json
 
@@ -13,8 +14,10 @@ def run(request):
     if request.method != 'POST':
         return
     data = json.loads(request.body.decode("utf-8"))
-    algs = ['rnd_rot']
+    algs = ['rnd_rot', 'four_perm']
     cmp = 'sum'
     points = data['points']
-    run_cpp(cmp, algs, points)
-    return HttpResponse('{}', content_type="application/json")
+    # print(points)
+    ret = run_cpp(cmp, algs, points)
+    # print(ret)
+    return JsonResponse(ret)

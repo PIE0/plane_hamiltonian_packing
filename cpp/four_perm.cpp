@@ -52,9 +52,9 @@ void solve(int now, vector <Point> &points, cmp_func &compare) {
 }
 
 // For better result, number of points must be divisible by 4
-// At most about 16 points
+// At most about 15 points
 pair <Path, Path> four_backtrack_solve(vector <Point> points, cmp_func compare) { 
-	assert(points.size() <= 16);
+	assert(points.size() <= 20);
 	answer = {10000000, 10000000};
 	sort(points.begin(), points.end());
 	solve(0, points, compare);

@@ -1,4 +1,3 @@
-
 var POINT_DIAM = 20;
 var PLANE_HEIGHT = $(plane).height();
 var PLANE_WIDTH = $(plane).width();
@@ -44,6 +43,19 @@ function ctoca(loc) { // canvas array coordinate to cartesian coordinate
 		y: CANVAS_HEIGHT - loc.y - ORIGIN_CANVAS_HEIGHT,
 	}
 }
+function catoc(loc) {
+	loc = makePoint(loc);
+	return {
+		x: loc.x + ORIGIN_CANVAS_WIDTH,
+		y: CANVAS_HEIGHT - loc.y - ORIGIN_CANVAS_HEIGHT,
+	};
+}
+function points_catow(points) {
+	wpoints = [];
+	for(var i=0; i < points.length; i++)
+		wpoints.push(ctow(catoc(points[i])));
+	return wpoints;
+}
 
 var mark = new Array(CANVAS_HEIGHT);
 for(var i=0; i < CANVAS_HEIGHT; i++) {
@@ -69,6 +81,20 @@ function onMouseDown(event) {
 
 document.getElementById("run").onclick = function() {run_algorithms()};
 
+function show_paths(paths) {
+	console.log(paths);
+	rnd_rot = paths.rnd_rot;
+	four_perm = paths.four_perm;
+	if(rnd_rot != undefined) {
+		console.log(rnd_rot[0]);
+		new Path({
+			segments: points_catow(rnd_rot[0]),
+			storkeWidth: POINT_DIAM/2,
+			strokeColor: 'green',
+		});
+	}
+}
+
 function run_algorithms() {
     $.ajax({
 		url : 'http://127.0.0.1:8000/run/',
@@ -77,9 +103,19 @@ function run_algorithms() {
 		data : JSON.stringify({
 			points: circles,
 		}),
-		dataType: 'application/json; charset=utf-8',
+		dataType: 'json',
+		success: function(data){
+			show_paths(data);
+		},
+		error: function (jqXHR, exception) {
+			alert('Error! See js logs for more information.');
+			console.log(exception);
+			console.log(jqXHR);
+		}
 	});
 }
+
+//[[2, 3], [3, 4], [5, 7], [-2, -9]]
 
 // Draw 2D Cartesian grid
 for(var i = 0; i < CANVAS_HEIGHT; i++)

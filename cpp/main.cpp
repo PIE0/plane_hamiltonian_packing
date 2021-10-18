@@ -24,8 +24,9 @@ map <string, cmp_func> COMPARES = {
 void write(string output_file, Path p1, Path p2) {
   path_output(p1);
   path_output(p2);
-  cout << check_cross_free_packing_paths(p1, p2, false) << endl;
-  cerr << check_cross_free_packing_paths(p1, p2, false) << endl;
+  auto answer = check_cross_free_packing_paths(p1, p2, false);
+  cout << answer.first << ' ' << answer.second << endl;
+  cerr << answer.first << ' ' << answer.second << endl;
 }
 
 // sample args: batch gen 10 5 20
