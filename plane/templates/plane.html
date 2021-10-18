@@ -10,14 +10,17 @@
     <script type="text/x-paperscript" canvas="plane" src="{% static 'js/plane.js' %}"></script> 
   </head>
   <body>
-    {% comment %} Grid {% endcomment %}
     <div>
-      <canvas id="plane"></canvas>
+      <span>
+        {% comment %} Grid {% endcomment %}
+        <canvas id="plane"></canvas>
+      
+        {% comment %} Buttons {% endcomment %}
+        <div id="config">
+          <button id="run" type="button">اجرا کن</button> 
+          <button id="clear" type="button">تمیزکاری</button>
+        </div>
+      </span>
     </div>
-    {% comment %} Buttons {% endcomment %}
-    <div id="config">
-       <button id="run" type="button">اجرا کن</button> 
-    </div>
-
   </body>
 </html>

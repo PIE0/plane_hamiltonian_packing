@@ -22,7 +22,7 @@ Path rotate_points(vector <Point> &points, double t) {
 
 pair <Path, Path> solve_rot_sort(vector <Point> points, cmp_func compare) {
   Path best_ph1, best_ph2;
-  pair <int, int> best_answer = {100000000, 10000000};
+  pair <int, int> best_answer = {1000000, 100000};
 
   int iter = ITERATIONS;
   while(iter--) {

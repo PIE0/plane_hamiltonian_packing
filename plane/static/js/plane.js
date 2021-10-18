@@ -64,6 +64,7 @@ for(var i=0; i < CANVAS_HEIGHT; i++) {
 		mark[i][j] = false;
 }
 var circles = [];
+var hamil_paths = [];
 
 // Draw a circle for every mouse click
 function onMouseDown(event) {
@@ -80,18 +81,30 @@ function onMouseDown(event) {
 }
 
 document.getElementById("run").onclick = function() {run_algorithms()};
+document.getElementById("clear").onclick = function() {clear()};
+
+function clear() {
+	for(var i=0; i < hamil_paths.length; i++)
+		hamil_paths[i].remove()
+	hamil_paths = []
+}
 
 function show_paths(paths) {
-	console.log(paths);
 	rnd_rot = paths.rnd_rot;
 	four_perm = paths.four_perm;
 	if(rnd_rot != undefined) {
-		console.log(rnd_rot[0]);
-		new Path({
+		hamil_paths.push(new Path({
 			segments: points_catow(rnd_rot[0]),
-			storkeWidth: POINT_DIAM/2,
+			strokeWidth: POINT_DIAM/5,
 			strokeColor: 'green',
-		});
+			strokeJoin: 'round',
+		}))
+		hamil_paths.push(new Path({
+			segments: points_catow(rnd_rot[1]),
+			strokeWidth: POINT_DIAM/5,
+			strokeColor: 'blue',
+			strokeJoin: 'round',
+		}))
 	}
 }
 

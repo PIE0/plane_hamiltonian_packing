@@ -33,5 +33,6 @@ def run_cpp(cmp, algs, points):
             path1 = extract_path(f, len(points))
             path2 = extract_path(f, len(points))
             answer = list(map(int, f.readline().split()))
-            ret[alg] = [path1, path2, answer]
+            if(len(answer) == 2):
+                ret[alg] = [path1, path2, answer]
     return ret

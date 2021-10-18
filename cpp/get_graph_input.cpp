@@ -39,7 +39,6 @@ vector <Point> read_input(string input_file, bool check_colinear) {
   freopen(input_file.c_str(), "r", stdin);
   int n;
   cin >> n;
-  assert(n >= 4);
   vector <Point> points(n, Point());
 	for(int i = 0; i < n; i++)
 		cin >> points[i].x >> points[i].y;

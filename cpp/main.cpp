@@ -26,7 +26,15 @@ void write(string output_file, Path p1, Path p2) {
   path_output(p2);
   auto answer = check_cross_free_packing_paths(p1, p2, false);
   cout << answer.first << ' ' << answer.second << endl;
-  cerr << answer.first << ' ' << answer.second << endl;
+}
+
+void run_sols(string input_file, string output_file, vector <sol_func> &sols, cmp_func &cmp) {
+  vector <Point> points=read_input(input_file, false);
+  freopen(output_file.c_str(), "w", stdout);
+  for(auto sol : sols) {
+    auto [p1, p2] = sol(points, cmp);
+    write(output_file, p1, p2);
+  }
 }
 
 // sample args: batch gen 10 5 20
@@ -43,29 +51,22 @@ int main(int argc, char *argv[]) {
   if(args.gen_test)
     generate(args.l, args.r, args.test_count);
   else {
+    assert(COMPARES.find(args.compare_method) != COMPARES.end());
     auto cmp = COMPARES[args.compare_method];
     vector <sol_func> sols;
     for(auto algo : args.algos) {
       assert(ALGORITHMS.find(algo) != ALGORITHMS.end());
       sols.push_back(ALGORITHMS[algo]);
     }
-    auto run_sols = [&](string input_file, string output_file) {
-      vector <Point> points=read_input(input_file, false);
-      freopen(output_file.c_str(), "w", stdout);
-      for(auto sol : sols) {
-        auto [p1, p2] = sol(points, cmp);
-        write(output_file, p1, p2);
-      }
-    };
     if(args.batch) {
       for(int i = 1; i <= args.test_count; i++) {
         cerr << "Running " << i << "th test..." << endl;
         string input_file  = args.input_folder+"/input"+to_string(i)+".txt";
         string output_file = args.output_folder+"/output"+to_string(i)+".txt";
-        run_sols(input_file, output_file);
+        run_sols(input_file, output_file, sols, cmp);
       }
     } else
-      run_sols(args.input_file, args.output_file);
+      run_sols(args.input_file, args.output_file, sols, cmp);
   }
   cerr << "\nTime to run: " << 1000 * clock() / CLOCKS_PER_SEC << endl;
 }
