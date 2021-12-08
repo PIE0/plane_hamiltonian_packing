@@ -124,3 +124,8 @@ pair<int, int> check_cross_free_packing_paths(Path p1, Path p2, bool circuit_bre
   int crossings2 = p2.count_crossings(circuit_break);
   return {crossings1 + crossings2, repeated_edge};
 }
+
+vector <Point> sort_points_on_view(vector <Point> &ps, Point p) {
+  // TODO: implement me
+  return ps;
+}

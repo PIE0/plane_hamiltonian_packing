@@ -52,3 +52,5 @@ bool SegmentsIntersect(Point, Point, Point, Point);
 
 int count_repeated_edge(Path p1, Path p2, bool circuit_break);
 pair<int, int> check_cross_free_packing_paths(Path, Path, bool=true);
+
+vector <Point> sort_points_on_view(vector <Point> ps, Point p);

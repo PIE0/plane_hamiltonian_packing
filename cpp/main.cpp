@@ -1,9 +1,9 @@
 // be name khoda
-#include "graph_utils.h"
-#include "utils.cpp"
-#include "rnd_rot.cpp"
-#include "four_perm.cpp"
-#include "get_graph_input.cpp"
+#include "utils/graph_utils.h"
+#include "utils/utils.cpp"
+#include "utils/get_graph_input.cpp"
+#include "algorithms/rnd_rot.cpp"
+#include "algorithms/four_perm.cpp"
 #include "test_gen.cpp"
 #include "argument_parser.cpp"
 #include <assert.h>
