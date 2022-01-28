@@ -17,7 +17,7 @@ def run(request):
     algs = ['rnd_rot', 'four_perm']
     cmp = 'sum'
     points = data['points']
-    print("input: ", points)
+    # print("input: ", points)
     ret = run_cpp(cmp, algs, points)
-    print("output: ", ret)
+    # print("output: ", ret)
     return JsonResponse(ret)

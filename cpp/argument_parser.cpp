@@ -14,7 +14,7 @@ struct Arguments {
 
 Arguments parse_args(vector <string> args_str) {
   assert(args_str[0] == "batch" or args_str[0] == "single");
-  assert(args_str[1] == "gen" or args_str[1] == "-");
+  assert(args_str[1] == "gen" or args_str[1] == "run");
   Arguments args;
   args.batch = (args_str[0]=="batch");
   args.gen_test = (args_str[1]=="gen");
