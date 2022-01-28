@@ -24,11 +24,11 @@ map <string, cmp_func> COMPARES = {
 };
 
 void write(string output_file, Path p1, Path p2) {
-  exit(0);
   path_output(p1);
   path_output(p2);
   auto answer = check_cross_free_packing_paths(p1, p2, false);
   cout << answer.first << ' ' << answer.second << endl;
+  cerr << "Answer compare: " << answer.first << ' ' << answer.second << endl;
 }
 
 void run_sols(string input_file, string output_file, vector <sol_func> &sols, cmp_func &cmp) {
