@@ -6,11 +6,12 @@ int cnt_intersect_check = 0;
 Point::Point() {}
 Point::Point(double x, double y) : x(x), y(y) {}
 Point::Point(const Point &p) : x(p.x), y(p.y) {}
-Point Point::operator + (const Point &p)  const { return Point(x+p.x, y+p.y); }
-Point Point::operator - (const Point &p)  const { return Point(x-p.x, y-p.y); }
-Point Point::operator * (long long c)     const { return Point(x*c, y*c); }
-bool Point::operator < (const Point &p)  const { return x < p.x or (x == p.x and y < p.y); }
-bool Point::operator == (const Point &p)  const { return x == p.x and y == p.y; }
+Point Point::operator + (const Point &p) const { return Point(x+p.x, y+p.y); }
+Point Point::operator - (const Point &p) const { return Point(x-p.x, y-p.y); }
+Point Point::operator * (double c) const { return Point(x*c, y*c); }
+Point Point::operator / (double c) const { return Point(x/c, y/c); }
+bool Point::operator < (const Point &p) const { return x < p.x or (x == p.x and y < p.y); }
+bool Point::operator == (const Point &p) const { return x == p.x and y == p.y; }
 double Point::operator*(Point q) const { return x * q.y - y * q.x; }
 
 ostream& operator<<(ostream &os, const Point &p) { return os << setprecision(2) << fixed << "(" << p.x << "," << p.y << ")"; }
@@ -24,6 +25,9 @@ template ostream& operator<< <int>(ostream &os, const vector <int> &v);
 void points_output(vector <Point> points) {
   for(auto p : points)
     cout << p.x << ' ' << p.y << endl;
+}
+ostream& operator <<(ostream& os, const pair <Point, Point> &p) {
+    return os << "{" << p.first << "," << p.second << "}";
 }
 
 Path::Path() {}
@@ -101,6 +105,15 @@ bool SegmentsIntersect(Point a, Point b, Point c, Point d) {
   return true;
 }
 
+Point line_intersect(Point L11, Point L12, Point L21, Point L22) {
+  if(lines_collinear(L11, L12, L21, L22)) {
+    return L11;
+  }
+  double d1 = (L21-L11) * (L12-L11);
+  double d2 = (L22-L11) * (L12-L11);
+  return (L22 * d1 - L21 * d2) / (d1-d2);
+}
+
 int count_repeated_edge(Path p1, Path p2, bool circuit_break) {
   int cnt = 0;
   for(int i = 0; i < p1.points.size()-1; i++)
@@ -125,7 +138,34 @@ pair<int, int> check_cross_free_packing_paths(Path p1, Path p2, bool circuit_bre
   return {crossings1 + crossings2, repeated_edge};
 }
 
-vector <Point> sort_points_on_view(vector <Point> &ps, Point p) {
-  // TODO: implement me
-  return ps;
+
+float get_angle_ABC(Point a, Point b, Point c) {
+    if(a == b or b == c or a == c)
+      return 0;
+    Point ab = { b.x - a.x, b.y - a.y };
+    Point cb = { b.x - c.x, b.y - c.y };
+    float dot = (ab.x * cb.x + ab.y * cb.y); // dot product
+    float cross = (ab.x * cb.y - ab.y * cb.x); // cross product
+    float alpha = fabs(atan2(cross, dot));
+    return alpha * 180. / PIE;
+}
+
+vector <Point> find_convex_hull(vector <Point> points) {
+  sort(points.begin(), points.end());
+  vector<Point> up, dn;
+  auto area2 = [](Point a, Point b, Point c) {
+    return a*b + b*c + c*a;
+  };
+  for (int i = 0; i < points.size(); i++) {
+    while (up.size() > 1 && area2(up[up.size()-2], up.back(), points[i]) >= 0) 
+      up.pop_back();
+    while (dn.size() > 1 && area2(dn[dn.size()-2], dn.back(), points[i]) <= 0)
+      dn.pop_back();
+    up.push_back(points[i]);
+    dn.push_back(points[i]);
+  }
+  vector <Point> convex_hull=dn;
+  for (int i = (int) up.size() - 2; i >= 1; i--)
+    convex_hull.push_back(up[i]);
+  return convex_hull;
 }

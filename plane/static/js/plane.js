@@ -95,13 +95,13 @@ function show_paths(paths) {
 	if(rnd_rot != undefined) {
 		hamil_paths.push(new Path({
 			segments: points_catow(rnd_rot[0]),
-			strokeWidth: POINT_DIAM/5,
+			strokeWidth: 1,
 			strokeColor: 'green',
 			strokeJoin: 'round',
 		}))
 		hamil_paths.push(new Path({
 			segments: points_catow(rnd_rot[1]),
-			strokeWidth: POINT_DIAM/5,
+			strokeWidth: 1,
 			strokeColor: 'blue',
 			strokeJoin: 'round',
 		}))
@@ -140,7 +140,6 @@ for(var i = 0; i < CANVAS_HEIGHT; i++)
 new Path({
 	segments: [[0, X_AXIS_HEIGHT], [PLANE_WIDTH, X_AXIS_HEIGHT]],
 	strokeColor: 'black',
-	storkeWidth: 3,
 });
 for(var i = 0; i < CANVAS_WIDTH; i++) {
 	new Path({
@@ -158,7 +157,6 @@ for(var i = 0; i < CANVAS_WIDTH; i++) {
 new Path({
 	segments: [[Y_AXIS_WIDTH, 0], [Y_AXIS_WIDTH, PLANE_HEIGHT]],
 	strokeColor: 'black',
-	storkeWidth: 3,
 });
 for(var i = 0; i < CANVAS_HEIGHT; i++) {
 	new Path({

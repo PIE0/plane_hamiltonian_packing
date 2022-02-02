@@ -4,6 +4,7 @@
 #include "utils/get_graph_input.cpp"
 #include "algorithms/rnd_rot.cpp"
 #include "algorithms/four_perm.cpp"
+#include "algorithms/zigzag.cpp"
 #include "test_gen.cpp"
 #include "argument_parser.cpp"
 #include <assert.h>
@@ -13,6 +14,7 @@ using namespace std;
 map <string, sol_func> ALGORITHMS = {
   {"rnd_rot", solve_rot_sort},
   {"four_perm", four_backtrack_solve},
+  {"zigzag", find_two_disjoint_plane_paths},
 };
 
 map <string, cmp_func> COMPARES = {
@@ -26,6 +28,7 @@ void write(string output_file, Path p1, Path p2) {
   path_output(p2);
   auto answer = check_cross_free_packing_paths(p1, p2, false);
   cout << answer.first << ' ' << answer.second << endl;
+  cerr << "Answer compare: " << answer.first << ' ' << answer.second << endl;
 }
 
 void run_sols(string input_file, string output_file, vector <sol_func> &sols, cmp_func &cmp) {
@@ -39,8 +42,8 @@ void run_sols(string input_file, string output_file, vector <sol_func> &sols, cm
 
 // sample args: batch gen 10 5 20
 // sample args: single gen 20 300
-// sample args: batch - 10 input_folder output_folder sum rnd_rot four_perm
-// sample args: single - sum rnd_rot four_perm
+// sample args: batch run 10 input_folder output_folder sum rnd_rot four_perm
+// sample args: single run sum rnd_rot four_perm
 // l and r must be at least 4
 int main(int argc, char *argv[]) {
   assert(argc >= 5); // not enough arguments to run

@@ -40,8 +40,11 @@ vector <Point> read_input(string input_file, bool check_colinear) {
   int n;
   cin >> n;
   vector <Point> points(n, Point());
-	for(int i = 0; i < n; i++)
+	for(int i = 0; i < n; i++) {
 		cin >> points[i].x >> points[i].y;
+    assert(abs(points[i].x) < INF_COORDINATE);
+    assert(abs(points[i].y) < INF_COORDINATE);
+  }
   if(check_colinear)
     check_colinear_points(points);
   return points;
