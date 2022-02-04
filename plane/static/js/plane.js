@@ -72,6 +72,7 @@ for(var i=0; i < CANVAS_HEIGHT; i++) {
 		mark[i][j] = false;
 }
 var circles = [];
+var circle_objects = [];
 var hamil_paths = [];
 
 // Draw a circle for every mouse click
@@ -86,22 +87,33 @@ function onMouseDown(event) {
 	var circle = new Path.Circle(loc, POINT_DIAM/2-2);
 	circle.strokeColor = 'red';
 	circle.strokeWidth = 3;
+	circle_objects.push(circle);
 }
 
 document.getElementById("run").onclick = function() {run_algorithms()};
-document.getElementById("clear").onclick = function() {clear()};
+document.getElementById("clear_paths").onclick = function() {clear_paths()};
+document.getElementById("clear_points").onclick = function() {clear_points()};
 
-function clear() {
+function clear_paths() {
 	for(var i=0; i < hamil_paths.length; i++)
 		hamil_paths[i].remove()
 	hamil_paths = []
 }
 
-function show_paths(paths) {
-	rnd_rot = paths.rnd_rot;
-	four_perm = paths.four_perm;
-	zigzag = paths.zigzag;
-	genetic = paths.genetic;
+function clear_points() {
+	for(var i=0; i < circle_objects.length; i++)
+		circle_objects[i].remove();
+	circle_objects = []
+	circles = []
+}
+
+function show_paths(ret_data) {
+	console.log(ret_data)
+	rnd_rot = ret_data.rnd_rot;
+	four_perm = ret_data.four_perm;
+	zigzag = ret_data.zigzag;
+	genetic = ret_data.genetic;
+	fitness = ret_data.fitness
 	var paths;
 	if(rnd_rot != undefined)
 		paths = rnd_rot;
@@ -112,31 +124,37 @@ function show_paths(paths) {
 	else if(genetic != undefined)
 		paths = genetic;
 	hamil_paths.push(new Path({
-		segments: points_catow(paths[0], 0, 5),
-		strokeWidth: 1,
+		segments: points_catow(paths[0], 0, 3),
+		strokeWidth: 2,
 		strokeColor: 'green',
 		strokeJoin: 'round',
 	}))
 	hamil_paths.push(new Path({
 		segments: points_catow(paths[1], 0, 0),
-		strokeWidth: 1,
+		strokeWidth: 2,
 		strokeColor: 'blue',
 		strokeJoin: 'round',
 	}))
+	document.getElementById("self_intersection").innerText = fitness[0];
+	document.getElementById("shared_edges").innerText = fitness[1];
+	document.getElementById("intersections").innerText = fitness[2];
+	document.getElementById("final_fitness").innerText = fitness[3];
 }
 
 function run_algorithms() {
 	// circles = [[0, 0], [3, 3]];
+	var algorithm = document.querySelector('input[name="algorithm"]:checked').value;
     $.ajax({
 		url : 'http://127.0.0.1:8000/run/',
 		headers: { 'X-CSRFToken': Cookies.get('csrftoken')},
 		type : 'POST',
 		data : JSON.stringify({
 			points: circles,
+			algorithm: algorithm,
 		}),
 		dataType: 'json',
 		success: function(data){
-			clear();
+			clear_paths();
 			show_paths(data);
 		},
 		error: function (jqXHR, exception) {

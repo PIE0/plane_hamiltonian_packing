@@ -18,16 +18,46 @@
         {% comment %} Buttons {% endcomment %}
         <div id="config">
           <button id="run" type="button">اجرا کن</button> 
-          <button id="clear" type="button">تمیزکاری</button>
-
-          <p>خروجی کدام الگوریتم نشان داده شود؟</p>
-          <input type="radio" id="html" name="fav_language" value="rnd_rot">
-          <label for="html">HTML</label><br>
-          <input type="radio" id="css" name="fav_language" value="four_perm">
-          <label for="css">CSS</label><br>
-          <input type="radio" id="javascript" name="fav_language" value="JavaScript">
-          <label for="javascript">JavaScript</label>
-
+          <button id="clear_paths" type="button">تمیزکاری</button>
+          <button id="clear_points" type="button">پاک کردن نقاط</button>
+          <div style="float:center" align="right">
+            <div style="float:left;padding:20px" align="right">
+              <p>خروجی کدام الگوریتم نشان داده شود؟</p>
+              <input type="radio" id="random_rotation" name="algorithm" value="rnd_rot">
+              <label for="random_rotation">Random Rotation</label><br>
+              <input type="radio" id="four_permutation" name="algorithm" value="four_perm">
+              <label for="four_permutationss">Four Permutation</label><br>
+              <input type="radio" id="genetic" name="algorithm" value="genetic">
+              <label for="genetic">Genetic</label><br>
+              <input type="radio" id="zigzag" name="algorithm" value="zigzag">
+              <label for="zigzag">Zigzag</label><br>
+            </div>
+            <div style="float:left;padding:20px" align="right">
+              <p>از کدام تابع برای ارزیابی راه‌حل‌ها استفاده شود؟</p>
+              <input type="radio" id="sum" name="evaluation" value="sum">
+              <label for="sum">Sum</label><br>
+              <input type="radio" id="weighted_sum" name="evaluation" value="weighted_sum">
+              <label for="weighted_sum">Weighted Sum</label><br>
+            </div>
+            <div style="float:left;padding:20px">
+              <div>
+                <p style="float:right;padding-left:20px">:تعداد تقاطع‌های یک مسیر با خودش</p>
+                <p style="float:right" id=self_intersection>-----</p>
+              </div>
+              <div>
+                <p style="float:right;padding-left:20px">:تعداد یال مشترک بین دو مسیر</p>
+                <p style="float:right" id=shared_edges>-----</p>
+              </div>
+              <div>
+                <p style="float:right;padding-left:20px">:تعداد تقاطع‌های دو مسیر با یکدیگر</p>
+                <p style="float:right" id=intersections>-----</p>
+              </div>
+              <div>
+                <p style="float:right;padding-left:20px">:امتیاز نهایی</p>
+                <p style="float:right" id=final_fitness>-----</p>
+              </div>
+            </div>
+          </div>
         </div>
       </span>
     </div>

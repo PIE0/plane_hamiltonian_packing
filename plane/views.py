@@ -20,7 +20,7 @@ def run(request):
     points = data['points']
     algorithm = [data.get('algorithm') or 'zigzag'] # FIXME
     evaluation = data.get('evaluation') or 'weighted_sum' # FIXME
-    # print("input: ", points)
+    print("input: ", points)
     ret = run_cpp(evaluation, algorithm, points)
     print("output: ", ret)
     return JsonResponse(ret)

@@ -28,10 +28,10 @@ map <string, eval_func> COMPARES = {
   }},
 };
 
-void write(string output_file, Path p1, Path p2, tuple <int, int, int> answer) {
+void write(string output_file, Path p1, Path p2, tuple <int, int, int> answer, int fitness) {
   path_output(p1);
   path_output(p2);
-  cout << get<0>(answer) << " " << get<1>(answer) << " " << get<2>(answer) << endl;
+  cout << get<0>(answer) << " " << get<1>(answer) << " " << get<2>(answer) << ' ' << fitness << endl;
 }
 
 void run_sols(string input_file, string output_file, vector <pair<string, sol_func>> &sols, eval_func &evaluation) {
@@ -49,7 +49,7 @@ void run_sols(string input_file, string output_file, vector <pair<string, sol_fu
       count[point]++;
     auto answer = check_cross_free_packing_paths(p1, p2, false);
     cerr << sol.first << "'s answer: " << answer << " --> " << evaluation(answer) << endl;
-    write(output_file, p1, p2, answer);
+    write(output_file, p1, p2, answer, evaluation(answer));
   }
   for(auto [k, v] : count) {
     // if(v != 2*sols.size()+1)
