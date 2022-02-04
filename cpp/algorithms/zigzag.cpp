@@ -37,7 +37,7 @@ Path find_left_right_solo_path(Point center, vector <Point> L, vector <Point> R,
     reverse(R.begin(), R.end());
   for(auto p : R)
     result.add(p);
-  cerr << "left right solo path: " << result << endl;
+  // cerr << "left right solo path: " << result << endl;
   return result;
 }
 
@@ -69,12 +69,12 @@ Path find_zigzag_path(Point center, vector <Point> L, vector <Point> R) {
       result.add(p1);
     }
   }
-  cerr << "zigzag path: " << result << endl;
+  // cerr << "zigzag path: " << result << endl;
   return result;
 }
 
-pair <Path, Path> find_two_disjoint_plane_paths(vector <Point> points, cmp_func compare) {
-  cerr << "All: " << points << endl;
+pair <Path, Path> find_two_disjoint_plane_paths(vector <Point> points, eval_func evaluation) {
+  // cerr << "All: " << points << endl;
   Path best_ph1(points), best_ph2(points);
   sort(points.begin(), points.end(), [](Point a, Point b){return a.y < b.y or (a.y == b.y and a.x < b.x);});
   Point center = points[0];
@@ -86,9 +86,9 @@ pair <Path, Path> find_two_disjoint_plane_paths(vector <Point> points, cmp_func 
         dist2(center, a) < dist2(center, b));
     });
   vector <Point> L(points.begin(), points.begin()+points.size()/2), R(points.begin()+points.size()/2, points.end());
-  cerr << "Center: " << center << endl;
-  cerr << "L: " << L << endl;
-  cerr << "R: " << R << endl;
+  // cerr << "Center: " << center << endl;
+  // cerr << "L: " << L << endl;
+  // cerr << "R: " << R << endl;
   Path zigzag_path = find_zigzag_path(center, L, R);
   return {zigzag_path, find_left_right_solo_path(center, L, R, zigzag_path.points[1])};
 }

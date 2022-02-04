@@ -5,6 +5,7 @@
 #include "algorithms/rnd_rot.cpp"
 #include "algorithms/four_perm.cpp"
 #include "algorithms/zigzag.cpp"
+#include "algorithms/genetic/genetic.cpp"
 #include "test_gen.cpp"
 #include "argument_parser.cpp"
 #include <assert.h>
@@ -15,29 +16,47 @@ map <string, sol_func> ALGORITHMS = {
   {"rnd_rot", solve_rot_sort},
   {"four_perm", four_backtrack_solve},
   {"zigzag", find_two_disjoint_plane_paths},
+  {"genetic", run_genetic},
 };
 
-map <string, cmp_func> COMPARES = {
-  {"sum", [](pair <int, int> a, pair <int, int> b) {
-    return a.first + a.second < b.first + b.second;
-  }}
+map <string, eval_func> COMPARES = {
+  {"sum", [](tuple <int, int, int> a) {
+    return get<0>(a) + get<1>(a) + get<2>(a);
+  }},
+  {"weighted_sum", [](tuple <int, int, int> a) {
+    return 5*get<0>(a) + 10*get<1>(a) + get<2>(a);
+  }},
 };
 
-void write(string output_file, Path p1, Path p2) {
+void write(string output_file, Path p1, Path p2, tuple <int, int, int> answer) {
   path_output(p1);
   path_output(p2);
-  auto answer = check_cross_free_packing_paths(p1, p2, false);
-  cout << answer.first << ' ' << answer.second << endl;
-  cerr << "Answer compare: " << answer.first << ' ' << answer.second << endl;
+  cout << get<0>(answer) << " " << get<1>(answer) << " " << get<2>(answer) << endl;
 }
 
-void run_sols(string input_file, string output_file, vector <sol_func> &sols, cmp_func &cmp) {
+void run_sols(string input_file, string output_file, vector <pair<string, sol_func>> &sols, eval_func &evaluation) {
   vector <Point> points=read_input(input_file, false);
   freopen(output_file.c_str(), "w", stdout);
+  map <Point, int> count;
+  for(auto point : points)
+    count[point] = 1;
+  cerr << "Number of points: " << points.size() << endl;
   for(auto sol : sols) {
-    auto [p1, p2] = sol(points, cmp);
-    write(output_file, p1, p2);
+    auto [p1, p2] = sol.second(points, evaluation);
+    for(auto point : p1.points)
+      count[point]++;
+    for(auto point : p2.points)
+      count[point]++;
+    auto answer = check_cross_free_packing_paths(p1, p2, false);
+    cerr << sol.first << "'s answer: " << answer << " --> " << evaluation(answer) << endl;
+    write(output_file, p1, p2, answer);
   }
+  for(auto [k, v] : count) {
+    // if(v != 2*sols.size()+1)
+    //   cerr << k << ' ' << v << endl;
+    assert(v == 2*sols.size()+1);
+  }
+  cerr << "END OF SOLUTION RUNS------------------" << endl;
 }
 
 // sample args: batch gen 10 5 20
@@ -56,10 +75,10 @@ int main(int argc, char *argv[]) {
   else {
     assert(COMPARES.find(args.compare_method) != COMPARES.end());
     auto cmp = COMPARES[args.compare_method];
-    vector <sol_func> sols;
+    vector <pair<string, sol_func>> sols;
     for(auto algo : args.algos) {
       assert(ALGORITHMS.find(algo) != ALGORITHMS.end());
-      sols.push_back(ALGORITHMS[algo]);
+      sols.push_back({algo, ALGORITHMS[algo]});
     }
     if(args.batch) {
       for(int i = 1; i <= args.test_count; i++) {

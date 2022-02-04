@@ -1,5 +1,5 @@
-import os
 import logging
+import os
 import subprocess
 
 PROJECT_PATH = os.path.abspath(os.path.dirname(__name__))
@@ -22,7 +22,7 @@ def run_cpp(cmp, algs, points):
     # Run cpp code
     os.chdir(cpp_path)
     try:
-        subprocess.run('./a.out single - {} {}'.format(cmp, ' '.join(algs)).split(), timeout=3)
+        subprocess.run('./a.out single run {} {}'.format(cmp, ' '.join(algs)).split(), timeout=5)
     except Exception as e:
         logger.error(e)
     # Read return value
@@ -33,6 +33,6 @@ def run_cpp(cmp, algs, points):
             path1 = extract_path(f, len(points))
             path2 = extract_path(f, len(points))
             answer = list(map(int, f.readline().split()))
-            if(len(answer) == 2):
+            if(len(answer) == 3):
                 ret[alg] = [path1, path2, answer]
     return ret

@@ -4,6 +4,10 @@ var PLANE_WIDTH = $(plane).width();
 var CANVAS_HEIGHT = Math.ceil(PLANE_HEIGHT/POINT_DIAM)+1;
 var CANVAS_WIDTH  = Math.ceil(PLANE_WIDTH/POINT_DIAM)+1;
 
+function chap(x) {
+	console.log(x);
+}
+
 function makePoint(loc) {
 	if(loc.x != undefined)
 		return loc;
@@ -50,10 +54,14 @@ function catoc(loc) {
 		y: CANVAS_HEIGHT - loc.y - ORIGIN_CANVAS_HEIGHT,
 	};
 }
-function points_catow(points) {
+function points_catow(points, xoffset, yoffset) {
 	wpoints = [];
-	for(var i=0; i < points.length; i++)
-		wpoints.push(ctow(catoc(points[i])));
+	for(var i=0; i < points.length; i++) {
+		var point = ctow(catoc(points[i]));
+		point.x += xoffset;
+		point.y += yoffset;
+		wpoints.push(point);
+	}
 	return wpoints;
 }
 
@@ -92,23 +100,33 @@ function clear() {
 function show_paths(paths) {
 	rnd_rot = paths.rnd_rot;
 	four_perm = paths.four_perm;
-	if(rnd_rot != undefined) {
-		hamil_paths.push(new Path({
-			segments: points_catow(rnd_rot[0]),
-			strokeWidth: 1,
-			strokeColor: 'green',
-			strokeJoin: 'round',
-		}))
-		hamil_paths.push(new Path({
-			segments: points_catow(rnd_rot[1]),
-			strokeWidth: 1,
-			strokeColor: 'blue',
-			strokeJoin: 'round',
-		}))
-	}
+	zigzag = paths.zigzag;
+	genetic = paths.genetic;
+	var paths;
+	if(rnd_rot != undefined)
+		paths = rnd_rot;
+	else if(four_perm != undefined)
+		paths = four_perm;
+	else if(zigzag != undefined)
+		paths = zigzag;
+	else if(genetic != undefined)
+		paths = genetic;
+	hamil_paths.push(new Path({
+		segments: points_catow(paths[0], 0, 5),
+		strokeWidth: 1,
+		strokeColor: 'green',
+		strokeJoin: 'round',
+	}))
+	hamil_paths.push(new Path({
+		segments: points_catow(paths[1], 0, 0),
+		strokeWidth: 1,
+		strokeColor: 'blue',
+		strokeJoin: 'round',
+	}))
 }
 
 function run_algorithms() {
+	// circles = [[0, 0], [3, 3]];
     $.ajax({
 		url : 'http://127.0.0.1:8000/run/',
 		headers: { 'X-CSRFToken': Cookies.get('csrftoken')},
@@ -118,6 +136,7 @@ function run_algorithms() {
 		}),
 		dataType: 'json',
 		success: function(data){
+			clear();
 			show_paths(data);
 		},
 		error: function (jqXHR, exception) {
@@ -127,8 +146,6 @@ function run_algorithms() {
 		}
 	});
 }
-
-//[[2, 3], [3, 4], [5, 7], [-2, -9]]
 
 // Draw 2D Cartesian grid
 for(var i = 0; i < CANVAS_HEIGHT; i++)
