@@ -12,6 +12,7 @@ Point Point::operator * (double c) const { return Point(x*c, y*c); }
 Point Point::operator / (double c) const { return Point(x/c, y/c); }
 bool Point::operator < (const Point &p) const { return x < p.x or (x == p.x and y < p.y); }
 bool Point::operator == (const Point &p) const { return x == p.x and y == p.y; }
+bool Point::operator != (const Point &p) const { return x != p.x or y != p.y; }
 double Point::operator*(Point q) const { return x * q.y - y * q.x; }
 
 ostream& operator<<(ostream &os, const Point &p) { return os << setprecision(2) << fixed << "(" << p.x << "," << p.y << ")"; }
@@ -30,7 +31,7 @@ ostream& operator <<(ostream& os, const pair <Point, Point> &p) {
     return os << "{" << p.first << "," << p.second << "}";
 }
 
-Path::Path() {}
+Path::Path() {points.clear();}
 Path::Path(vector <Point> points) : points(points) {}
 Path::Path(vector <Point> points, vector <int> p_index) {
   for(auto ind : p_index)
@@ -45,7 +46,7 @@ void path_output(Path path) {
 
 int Path::count_crossings(bool circuit_break=true) {
   int crossings = 0;
-  auto find_intersect = [&](Point a, Point b, Point c, Point d) {
+  auto find_intersect = [&](Point &a, Point &b, Point &c, Point &d) {
     // cerr << "Intersect: " << a << ' ' << b << ' ' << c << ' ' << d << endl;
     crossings++;
   };
@@ -127,17 +128,53 @@ int count_repeated_edge(Path p1, Path p2, bool circuit_break) {
   return cnt;
 }
 
-pair<int, int> check_cross_free_packing_paths(Path p1, Path p2, bool circuit_break) {
-  int repeated_edge = count_repeated_edge(p1, p2, circuit_break);
-  if(circuit_break and repeated_edge != 0)
-    return {0, 1};
-  int crossings1 = p1.count_crossings(circuit_break);
-  if(circuit_break and crossings1 != 0)
-    return {1, 0};
-  int crossings2 = p2.count_crossings(circuit_break);
-  return {crossings1 + crossings2, repeated_edge};
+int count_paths_intersections(Path p1, Path p2) {
+  int crossings = 0;
+  auto find_intersect = [&](Point &a, Point &b, Point &c, Point &d) {
+    // cerr << "Two Paths Intersect: " << a << ' ' << b << ' ' << c << ' ' << d << endl;
+    crossings++;
+  };
+  auto is_between = [](Point a, Point b, Point c) {
+    return lines_parallel(a, b, b, c) and dist2(a, c) < max(dist2(a, b), dist2(b, c));
+  };
+  for(int i=0; i < p1.points.size()-1; i++) {
+      for(int j = 0; j < p2.points.size()-1; j++) {
+        Point &a = p1.points[i], &b = p1.points[i+1], &c = p2.points[j], &d = p2.points[j+1];
+        if((a == c and b == d) or (a == d and b == c))
+          continue;
+        if(a == c or a == d or b == c or b == d) { // Check if two segments have not common subsegment
+          if(not lines_parallel(a, b, c, d))  
+            continue;
+          Point common=a, other1=b, other2=c;
+          if(a == c)
+            other2 = d;
+          else if (a != d) {
+            common = b;
+            other1 = a;
+            if(b == c)
+              other2 = d;
+          }
+          if(dist2(other1, other2) < max(dist2(common, other1), dist2(common, other2)))
+            find_intersect(a, b, c, d);
+          continue;
+        }
+        if(SegmentsIntersect(a, b, c, d))
+            find_intersect(a, b, c, d);
+      }
+  }
+  return crossings;
 }
 
+tuple<int, int, int> check_cross_free_packing_paths(Path p1, Path p2, bool circuit_break) {
+  int repeated_edge = count_repeated_edge(p1, p2, circuit_break);
+  if(circuit_break and repeated_edge != 0)
+    return {0, 1, 0};
+  int crossings1 = p1.count_crossings(circuit_break);
+  if(circuit_break and crossings1 != 0)
+    return {1, 0, 0};
+  int crossings2 = p2.count_crossings(circuit_break);
+  return {crossings1 + crossings2, repeated_edge, count_paths_intersections(p1, p2)};
+}
 
 float get_angle_ABC(Point a, Point b, Point c) {
     if(a == b or b == c or a == c)

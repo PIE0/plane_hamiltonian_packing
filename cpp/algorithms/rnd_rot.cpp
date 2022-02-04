@@ -2,9 +2,12 @@
 #include <algorithm>
 using namespace std;
 
-const double PRECISION = 30000;
-const int ITERATIONS = 10000;
-int cnt_sort_compares;
+namespace rnd_rot_algorithm {
+  static const double PRECISION = 30000;
+  static const int ITERATIONS = 10000;
+  static int cnt_sort_compares;
+}
+using namespace rnd_rot_algorithm;
 
 Path rotate_points(vector <Point> &points, double t) {
   vector <int> p_index;
@@ -19,19 +22,19 @@ Path rotate_points(vector <Point> &points, double t) {
   return Path(points, p_index);
 }
 
-pair <Path, Path> solve_rot_sort(vector <Point> points, cmp_func compare) {
+pair <Path, Path> solve_rot_sort(vector <Point> points, eval_func evaluation) {
   Path best_ph1, best_ph2;
-  pair <int, int> best_answer = {1000000, 100000};
+  tuple <int, int, int> best_answer = make_tuple(1000000, 1000000, 1000000);
 
   int iter = ITERATIONS;
   while(iter--) {
     auto random_angle = [](){return distr(eng) % (int)(2*PRECISION) / PRECISION * M_PI;};
     Path ph1 = rotate_points(points, random_angle());
     Path ph2 = rotate_points(points, random_angle());
-    pair <int, int> check_answer = check_cross_free_packing_paths(ph1, ph2, false);
-    if(compare(check_answer, best_answer))
+    tuple <int, int, int> check_answer = check_cross_free_packing_paths(ph1, ph2, false);
+    if(evaluation(check_answer) < evaluation(best_answer))
       best_ph1 = ph1, best_ph2 = ph2, best_answer = check_answer;
-    if(best_answer == pair<int,int>{0, 0})
+    if(best_answer == make_tuple(0, 0, 0))
       break;
   }
   return {best_ph1, best_ph2};

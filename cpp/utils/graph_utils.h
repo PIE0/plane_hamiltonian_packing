@@ -4,6 +4,7 @@
 #include <iomanip>
 #include <map>
 #include <algorithm>
+#include <tuple>
 using namespace std;
 
 class Point { 
@@ -18,6 +19,7 @@ public:
   Point operator / (double c) const;
   bool operator < (const Point &p) const;
   bool operator == (const Point &p) const;
+  bool operator != (const Point &p) const;
   double operator * (Point q) const;
 };
 
@@ -36,7 +38,7 @@ const double PIE = acos(-1);
 const int INF_COORDINATE = (1<<15);
 const double INF_DISTANCE = 1e18;
 
-using sol_func = pair<Path, Path> (*)(vector<Point>, bool (*)(pair<int, int>, pair<int, int>));
+using sol_func = pair<Path, Path> (*)(vector<Point>, int (*)(tuple<int, int, int>));
 ostream& operator<<(ostream &os, const Point &p);
 ostream& operator <<(ostream& os, const pair <Point, Point> &p);
 template <typename T>
@@ -58,7 +60,8 @@ bool SegmentsIntersect(Point, Point, Point, Point);
 Point line_intersect(Point L11, Point L12, Point L21, Point L22);
 
 int count_repeated_edge(Path p1, Path p2, bool circuit_break);
-pair<int, int> check_cross_free_packing_paths(Path, Path, bool=true);
+int count_paths_intersections(Path p1, Path p2);
+tuple<int, int, int> check_cross_free_packing_paths(Path, Path, bool=true);
 
 float get_angle_ABC(Point a, Point b, Point c);
 vector <Point> find_convex_hull(vector <Point> points);
