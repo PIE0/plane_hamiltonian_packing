@@ -1,5 +1,5 @@
 # Compile code with this command
-g++ --std=c++17 main.cpp utils/graph_utils.cpp
+g++ --std=c++17 main.cpp utils/graph_utils.cpp -pthread
 # Example Runs
 ./a.out batch gen 10 5 20
 ./a.out single gen 20 300

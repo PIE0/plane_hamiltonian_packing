@@ -11,7 +11,7 @@ def extract_path(f, point_count):
         points.append(list(map(int, f.readline().split())))
     return points
 
-def run_cpp(cmp, algs, points):
+def run_cpp(algs, points, weights):
     # Write to input.txt
     cpp_path = os.path.join(PROJECT_PATH, 'cpp')
     input_path = os.path.join(cpp_path, 'input.txt')
@@ -21,8 +21,9 @@ def run_cpp(cmp, algs, points):
             f.write(str(p[0]) + ' ' + str(p[1]) + '\n')
     # Run cpp code
     os.chdir(cpp_path)
+    print(weights)
     try:
-        subprocess.run('./a.out single run {} {}'.format(cmp, ' '.join(algs)).split(), timeout=5)
+        subprocess.run('./a.out single run {} {} {} {}'.format(*weights, ' '.join(algs)).split(), timeout=30)
     except Exception as e:
         logger.error(e)
     # Read return value

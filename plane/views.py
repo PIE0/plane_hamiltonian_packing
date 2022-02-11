@@ -17,10 +17,10 @@ def run(request):
     if request.method != 'POST':
         return
     data = json.loads(request.body.decode("utf-8"))
-    points = data['points']
     algorithm = [data.get('algorithm') or 'zigzag'] # FIXME
-    evaluation = data.get('evaluation') or 'weighted_sum' # FIXME
-    print("input: ", points)
-    ret = run_cpp(evaluation, algorithm, points)
-    print("output: ", ret)
+    points = data['points']
+    weights = data['weights']
+    # print("input: ", points)
+    ret = run_cpp(algorithm, points, weights)
+    # print("output: ", ret)
     return JsonResponse(ret)

@@ -31,7 +31,7 @@ void solve(int now, vector <Point> &points, eval_func &evaluation) {
 		auto [p1_inds, p2_inds] = make_paths();
 		Path path1 = Path(points, p1_inds), path2 = Path(points, p2_inds);
 		tuple <int, int, int> new_answer = check_cross_free_packing_paths(path1, path2, false);
-		if(evaluation(new_answer) < evaluation(answer)) {
+		if(get<0>(answer) == -1 or evaluation(new_answer) < evaluation(answer)) {
 			answer = new_answer;
 			best_path1=path1;
 			best_path2=path2;
@@ -57,7 +57,7 @@ void solve(int now, vector <Point> &points, eval_func &evaluation) {
 // At most about 15 points
 pair <Path, Path> four_backtrack_solve(vector <Point> points, eval_func evaluation) { 
 	assert(points.size() <= 15);
-	answer = make_tuple(10000000, 10000000, 10000000);
+	answer = make_tuple(-1, 10000000, 10000000);
 	sort(points.begin(), points.end());
 	solve(0, points, evaluation);
 	int n_last = (points.size()/4)*4;

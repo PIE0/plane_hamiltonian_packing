@@ -19,14 +19,18 @@ map <string, sol_func> ALGORITHMS = {
   {"genetic", run_genetic},
 };
 
+Arguments args;
+
 map <string, eval_func> COMPARES = {
   {"sum", [](tuple <int, int, int> a) {
     return get<0>(a) + get<1>(a) + get<2>(a);
   }},
   {"weighted_sum", [](tuple <int, int, int> a) {
-    return 5*get<0>(a) + 10*get<1>(a) + get<2>(a);
+    return args.self_intersection_weight*get<0>(a) + args.repeated_edge_weight*get<1>(a) + args.intersection_weight*get<2>(a);
   }},
 };
+
+map <string, tuple <int, int, int, int, int>> run_statistics;
 
 void write(string output_file, Path p1, Path p2, tuple <int, int, int> answer, int fitness) {
   path_output(p1);
@@ -42,14 +46,24 @@ void run_sols(string input_file, string output_file, vector <pair<string, sol_fu
     count[point] = 1;
   cerr << "Number of points: " << points.size() << endl;
   for(auto sol : sols) {
+    int start = 1000 * clock() / CLOCKS_PER_SEC;
+
     auto [p1, p2] = sol.second(points, evaluation);
     for(auto point : p1.points)
       count[point]++;
     for(auto point : p2.points)
       count[point]++;
     auto answer = check_cross_free_packing_paths(p1, p2, false);
-    cerr << sol.first << "'s answer: " << answer << " --> " << evaluation(answer) << endl;
-    write(output_file, p1, p2, answer, evaluation(answer));
+    auto eval = evaluation(answer);
+    {
+      get<0>(run_statistics[sol.first]) += 1000 * clock() / CLOCKS_PER_SEC - start;
+      get<1>(run_statistics[sol.first]) += get<0>(answer);
+      get<2>(run_statistics[sol.first]) += get<1>(answer);
+      get<3>(run_statistics[sol.first]) += get<2>(answer);
+      get<4>(run_statistics[sol.first]) += eval;
+    }
+    cerr << sol.first << "'s answer: " << answer << " --> " << eval << endl;
+    write(output_file, p1, p2, answer, eval);
   }
   for(auto [k, v] : count) {
     // if(v != 2*sols.size()+1)
@@ -59,7 +73,7 @@ void run_sols(string input_file, string output_file, vector <pair<string, sol_fu
   cerr << "END OF SOLUTION RUNS------------------" << endl;
 }
 
-// sample args: batch gen 10 5 20
+// sample args: batch gen 10 5 10
 // sample args: single gen 20 300
 // sample args: batch run 10 input_folder output_folder sum rnd_rot four_perm
 // sample args: single run sum rnd_rot four_perm
@@ -69,12 +83,12 @@ int main(int argc, char *argv[]) {
   vector <string> args_str;
   for(int i = 1; i < argc; i++)
     args_str.push_back(string(argv[i]));
-  auto args = parse_args(args_str);
+  args = parse_args(args_str);
   if(args.gen_test)
     generate(args.l, args.r, args.test_count);
   else {
-    assert(COMPARES.find(args.compare_method) != COMPARES.end());
-    auto cmp = COMPARES[args.compare_method];
+    assert(COMPARES.find("weighted_sum") != COMPARES.end());
+    auto cmp = COMPARES["weighted_sum"];
     vector <pair<string, sol_func>> sols;
     for(auto algo : args.algos) {
       assert(ALGORITHMS.find(algo) != ALGORITHMS.end());
@@ -89,6 +103,17 @@ int main(int argc, char *argv[]) {
       }
     } else
       run_sols(args.input_file, args.output_file, sols, cmp);
+    
+    cerr << "\nRun Statistics------------------" << endl;
+    for(auto [k, v] : run_statistics) {
+      cerr << k << ": ";
+      cerr << get<0>(v) / args.test_count << ' ';
+      cerr << (double)get<1>(v) / args.test_count << ' ';
+      cerr << (double)get<2>(v) / args.test_count << ' ';
+      cerr << (double)get<3>(v) / args.test_count << ' ';
+      cerr << (double)get<4>(v) / args.test_count << ' ';
+      cerr << endl;
+    }
   }
-  cerr << "\nTime to run: " << 1000 * clock() / CLOCKS_PER_SEC << endl;
+  cerr << "\nTotal run time: " << 1000 * clock() / CLOCKS_PER_SEC << endl;
 }

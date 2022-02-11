@@ -144,6 +144,9 @@ function show_paths(ret_data) {
 function run_algorithms() {
 	// circles = [[0, 0], [3, 3]];
 	var algorithm = document.querySelector('input[name="algorithm"]:checked').value;
+	var weights = [parseInt(document.getElementById("self_intersection_weight").value),
+				   parseInt(document.getElementById("shared_edge_weight").value),
+				   parseInt(document.getElementById("intersection_weight").value)]
     $.ajax({
 		url : 'http://127.0.0.1:8000/run/',
 		headers: { 'X-CSRFToken': Cookies.get('csrftoken')},
@@ -151,6 +154,7 @@ function run_algorithms() {
 		data : JSON.stringify({
 			points: circles,
 			algorithm: algorithm,
+			weights: weights,
 		}),
 		dataType: 'json',
 		success: function(data){

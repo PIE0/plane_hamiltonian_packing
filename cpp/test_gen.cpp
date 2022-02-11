@@ -16,8 +16,17 @@ void generate(int l, int r, int number_of_tests) {
     assert(r >= l);
     int n = distr(eng) % (r-l+1) + l;
     vector <Point> points;
-    for(int i = 0; i < n; i++) 
-      points.push_back(Point(distr(eng) % K - K/2, distr(eng)%K - K/2));
+    for(int i = 0; i < n; i++) {
+      Point new_point = Point(distr(eng) % K - K/2, distr(eng)%K - K/2);
+      bool flag = true;
+      for(int j = 0; flag and j < i; j++)
+        if(points[j] == new_point)
+          flag = false;
+      if(!flag)
+        i--;
+      else
+        points.push_back(new_point);
+    }
     cout << n << endl;
     assert(points.size() == n);
     points_output(points);

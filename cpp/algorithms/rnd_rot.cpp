@@ -24,7 +24,7 @@ Path rotate_points(vector <Point> &points, double t) {
 
 pair <Path, Path> solve_rot_sort(vector <Point> points, eval_func evaluation) {
   Path best_ph1, best_ph2;
-  tuple <int, int, int> best_answer = make_tuple(1000000, 1000000, 1000000);
+  tuple <int, int, int> best_answer = make_tuple(-1, 1000000, 1000000);
 
   int iter = ITERATIONS;
   while(iter--) {
@@ -32,7 +32,7 @@ pair <Path, Path> solve_rot_sort(vector <Point> points, eval_func evaluation) {
     Path ph1 = rotate_points(points, random_angle());
     Path ph2 = rotate_points(points, random_angle());
     tuple <int, int, int> check_answer = check_cross_free_packing_paths(ph1, ph2, false);
-    if(evaluation(check_answer) < evaluation(best_answer))
+    if(get<0>(best_answer) == -1 or evaluation(check_answer) < evaluation(best_answer))
       best_ph1 = ph1, best_ph2 = ph2, best_answer = check_answer;
     if(best_answer == make_tuple(0, 0, 0))
       break;
